@@ -142,3 +142,4 @@ static void my_setDelegate(id self, SEL _cmd, id<AVCaptureVideoDataOutputSampleB
     g_isRunning = NO;
     [g_pollTimer invalidate];
 }
+
