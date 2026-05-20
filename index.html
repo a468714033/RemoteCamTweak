@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频运维管理平台 - VideoOps</title>
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --sidebar-bg: #1a1d23;
+            --sidebar-hover: #252830;
+            --sidebar-active: #2c3038;
+            --primary: #4f6ef7;
+            --primary-hover: #3d5ce5;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --card-bg: #ffffff;
+            --border: #e5e7eb;
+            --radius: 10px;
+            --radius-sm: 6px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.06);
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== 侧边栏 ========== */
+        .sidebar {
+            width: 240px;
+            min-width: 240px;
+            background: var(--sidebar-bg);
+            color: #c9cdd4;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            transition: var(--transition);
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .sidebar-logo {
+            padding: 22px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+        .sidebar-logo .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #4f6ef7, #7c5cfc);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .sidebar-logo .logo-text {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+        }
+        .sidebar-logo .logo-ver {
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .sidebar-nav .nav-section {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #5c6068;
+            padding: 14px 12px 6px;
+            font-weight: 600;
+        }
+        .sidebar-nav .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            font-weight: 500;
+            color: #a0a5ae;
+            text-decoration: none;
+            user-select: none;
+            white-space: nowrap;
+            position: relative;
+        }
+        .sidebar-nav .nav-item:hover {
+            background: var(--sidebar-hover);
+            color: #d1d5db;
+        }
+        .sidebar-nav .nav-item.active {
+            background: var(--sidebar-active);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: inset 3px 0 0 var(--primary);
+        }
+        .sidebar-nav .nav-item .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .sidebar-nav .nav-item .badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .sidebar-nav .nav-item .badge.warn {
+            background: var(--warning);
+            color: #000;
+        }
+
+        .sidebar-footer {
+            padding: 14px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 12px;
+            color: #5c6068;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .sidebar-footer .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+            }
+        }
+
+        /* ========== 主内容区 ========== */
+        .main-content {
+            margin-left: 240px;
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        /* 顶部栏 */
+        .topbar {
+            background: var(--card-bg);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .topbar .page-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        .topbar .breadcrumb {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .topbar-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .topbar-actions .btn {
+            font-size: 13px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            border: none;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(79, 110, 247, 0.35);
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background: #fff;
+            border: 1.5px solid var(--border);
+            color: var(--text);
+        }
+        .btn-outline:hover {
+            border-color: #c4c9d0;
+            background: #f9fafb;
+        }
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px;
+            border-radius: 5px;
+        }
+        .btn-xs {
+            padding: 3px 10px;
+            font-size: 11px;
+            border-radius: 4px;
+        }
+        .btn-danger-text {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        .btn-danger-text:hover {
+            background: #fef2f2;
+        }
+        .btn-info-text {
+            background: transparent;
+            border: none;
+            color: var(--info);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        .btn-info-text:hover {
+            background: #eff6ff;
+        }
+
+        /* 内容区 */
+        .content-area {
+            padding: 24px 28px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* ========== 仪表盘卡片 ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            cursor: default;
+        }
+        .stat-card:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: #e5e7eb;
+            transform: translateY(-2px);
+        }
+        .stat-card .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        .stat-card .stat-icon.blue {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+        .stat-card .stat-icon.green {
+            background: #ecfdf5;
+            color: #22c55e;
+        }
+        .stat-card .stat-icon.orange {
+            background: #fffbeb;
+            color: #f59e0b;
+        }
+        .stat-card .stat-icon.purple {
+            background: #f5f3ff;
+            color: #7c5cfc;
+        }
+        .stat-card .stat-icon.red {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+        .stat-card .stat-info .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text);
+        }
+        .stat-card .stat-info .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .stat-card .stat-info .stat-change {
+            font-size: 11px;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+        .stat-change.up {
+            color: #22c55e;
+        }
+        .stat-change.down {
+            color: #ef4444;
+        }
+
+        /* ========== 卡片面板 ========== */
+        .panel {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+        }
+        .panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .panel-header h3 {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+        .panel-body {
+            padding: 16px 20px;
+            overflow-x: auto;
+        }
+        .panel-body.no-padding {
+            padding: 0;
+        }
+
+        /* ========== 表格 ========== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 900px;
+        }
+        table th {
+            text-align: left;
+            padding: 12px 14px;
+            background: #f9fafb;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+        table td {
+            padding: 11px 14px;
+            border-bottom: 1px solid #f3f4f6;
+            white-space: nowrap;
+        }
+        table tbody tr {
+            transition: var(--transition);
+        }
+        table tbody tr:hover {
+            background: #fafbfc;
+        }
+        .video-title-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 280px;
+        }
+        .video-title-cell .thumb {
+            width: 44px;
+            height: 28px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #e5e7eb;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 10px;
+            overflow: hidden;
+        }
+        .video-title-cell .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-title-cell .vtitle {
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+            color: var(--text);
+        }
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+        .tag-success {
+            background: #ecfdf5;
+            color: #059669;
+        }
+        .tag-warning {
+            background: #fffbeb;
+            color: #b45309;
+        }
+        .tag-info {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+        .tag-danger {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        .tag-gray {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        .tag-online {
+            background: #ecfdf5;
+            color: #059669;
+            font-weight: 600;
+        }
+        .tag-offline {
+            background: #fef2f2;
+            color: #dc2626;
+            font-weight: 600;
+        }
+        .tag-pending {
+            background: #fffbeb;
+            color: #b45309;
+            font-weight: 600;
+        }
+
+        /* ========== 搜索过滤栏 ========== */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .search-input {
+            padding: 9px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            width: 260px;
+            transition: var(--transition);
+            outline: none;
+            background: #fff;
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
+        }
+        .select-filter {
+            padding: 9px 30px 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            background: #fff;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition);
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+        .select-filter:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
+        }
+
+        /* ========== 分页 ========== */
+        .pagination {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 0;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            transition: var(--transition);
+            font-weight: 500;
+            color: var(--text);
+        }
+        .pagination button:hover {
+            background: #f9fafb;
+            border-color: #c4c9d0;
+        }
+        .pagination button.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+        .pagination button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .pagination .page-info {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin: 0 8px;
+        }
+
+        /* ========== 模态框 ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.25s ease;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 10;
+            border-radius: 12px 12px 0 0;
+        }
+        .modal-header h2 {
+            font-size: 17px;
+            font-weight: 700;
+        }
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #f3f4f6;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+        .modal-close:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+        .modal-body {
+            padding: 20px 22px;
+        }
+        .modal-body .form-group {
+            margin-bottom: 15px;
+        }
+        .modal-body label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+        .modal-body input,
+        .modal-body select,
+        .modal-body textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .modal-body input:focus,
+        .modal-body select:focus,
+        .modal-body textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
+        }
+        .modal-body textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        .modal-footer {
+            padding: 14px 22px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            position: sticky;
+            bottom: 0;
+            background: #fff;
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* ========== 进度条 ========== */
+        .progress-bar-wrap {
+            background: #e5e7eb;
+            border-radius: 8px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.5s ease;
+        }
+        .progress-bar-fill.blue {
+            background: var(--info);
+        }
+        .progress-bar-fill.green {
+            background: var(--success);
+        }
+        .progress-bar-fill.orange {
+            background: var(--warning);
+        }
+
+        /* ========== 简易图表 ========== */
+        .mini-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 60px;
+        }
+        .mini-chart .bar {
+            flex: 1;
+            border-radius: 3px 3px 0 0;
+            background: #e0e7ff;
+            transition: var(--transition);
+            min-width: 4px;
+        }
+        .mini-chart .bar.high {
+            background: var(--primary);
+        }
+
+        /* ========== 双列布局 ========== */
+        .row-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        @media (max-width: 900px) {
+            .row-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========== 热门列表 ========== */
+        .hot-list {
+            list-style: none;
+        }
+        .hot-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 13px;
+        }
+        .hot-list li:last-child {
+            border-bottom: none;
+        }
+        .hot-list .rank {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .hot-list .rank.top1 {
+            background: #fef3c7;
+            color: #b45309;
+        }
+        .hot-list .rank.top2 {
+            background: #e5e7eb;
+            color: #4b5563;
+        }
+        .hot-list .rank.top3 {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+        .hot-list .rank.normal {
+            background: #f9fafb;
+            color: #9ca3af;
+        }
+        .hot-list .hot-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .hot-list .hot-views {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        /* ========== 滚动条美化 ========== */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+                min-width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+            .content-area {
+                padding: 16px;
+            }
+            .topbar {
+                padding: 10px 16px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+            }
+            .stat-card {
+                padding: 14px 16px;
+                gap: 10px;
+            }
+            .stat-card .stat-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+            .stat-card .stat-info .stat-value {
+                font-size: 20px;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-input {
+                width: 100%;
+            }
+            .select-filter {
+                width: 100%;
+            }
+        }
+        @media (max-width: 540px) {
+            .sidebar {
+                width: 56px;
+                min-width: 56px;
+            }
+            .sidebar .logo-text,
+            .sidebar .nav-section,
+            .sidebar .nav-item span:not(.nav-icon),
+            .sidebar .badge,
+            .sidebar-footer span {
+                display: none;
+            }
+            .sidebar-nav .nav-item {
+                justify-content: center;
+                padding: 12px;
+            }
+            .sidebar-logo {
+                justify-content: center;
+                padding: 14px 8px;
+            }
+            .main-content {
+                margin-left: 56px;
+            }
+            .topbar .page-title {
+                font-size: 15px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            table {
+                min-width: 650px;
+                font-size: 11px;
+            }
+            table th,
+            table td {
+                padding: 8px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 侧边栏 ==================== -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">▶</div>
+            <div>
+                <div class="logo-text">VideoOps</div>
+                <div class="logo-ver">v2.4.1</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">主菜单</div>
+            <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard', this)">
+                <span class="nav-icon">📊</span> 运营仪表盘
+            </div>
+            <div class="nav-item" data-page="videos" onclick="switchPage('videos', this)">
+                <span class="nav-icon">🎬</span> 视频资源管理
+                <span class="badge" id="totalBadge">28</span>
+            </div>
+            <div class="nav-item" data-page="upload" onclick="switchPage('upload', this)">
+                <span class="nav-icon">📤</span> 上传视频
+            </div>
+            <div class="nav-section">监控</div>
+            <div class="nav-item" data-page="transcode" onclick="switchPage('transcode', this)">
+                <span class="nav-icon">⚙️</span> 转码队列
+                <span class="badge warn" id="transcodeBadge">3</span>
+            </div>
+            <div class="nav-item" data-page="cdn" onclick="switchPage('cdn', this)">
+                <span class="nav-icon">🌐</span> CDN 状态
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="dot"></div> <span>系统运行中</span>
+        </div>
+    </aside>
+
+    <!-- ==================== 主内容区 ==================== -->
+    <div class="main-content" id="mainContent">
+        <!-- 顶部栏 -->
+        <div class="topbar">
+            <div>
+                <div class="page-title" id="pageTitle">运营仪表盘</div>
+                <div class="breadcrumb">首页 / <span id="breadcrumbSub">仪表盘</span></div>
+            </div>
+            <div class="topbar-actions">
+                <button class="btn btn-outline btn-sm" onclick="refreshData()">🔄 刷新数据</button>
+                <button class="btn btn-primary btn-sm" onclick="openUploadModal()">+ 上传视频</button>
+            </div>
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="content-area" id="contentArea">
+            <!-- 动态渲染内容 -->
+        </div>
+    </div>
+
+    <!-- ==================== 模态框容器 ==================== -->
+    <div id="modalContainer"></div>
+
+    <script>
+        // ==================== 模拟数据存储 ====================
+        const STORAGE_KEY = 'videoops_data';
+        const defaultVideos = [{
+            id: 1,
+            title: '2024年度产品发布会全程录像',
+            cover: '🎤',
+            duration: '2:15:30',
+            size: '4.8 GB',
+            format: 'MP4',
+            resolution: '4K',
+            uploadTime: '2024-12-15 09:30',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 125800,
+            category: '企业宣传',
+            cdnStatus: 'synced',
+            storagePath: '/videos/2024/product-launch.mp4',
+            bandwidth: '1.2 TB',
+        }, {
+            id: 2,
+            title: 'Python高性能编程实战教程-第5集',
+            cover: '🐍',
+            duration: '45:22',
+            size: '1.2 GB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2024-12-18 14:20',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 89200,
+            category: '教育课程',
+            cdnStatus: 'synced',
+            storagePath: '/videos/edu/python-perf-ep5.mp4',
+            bandwidth: '680 GB',
+        }, {
+            id: 3,
+            title: '双11直播带货精彩片段剪辑',
+            cover: '🛒',
+            duration: '32:10',
+            size: '890 MB',
+            format: 'MOV',
+            resolution: '4K',
+            uploadTime: '2024-12-20 22:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'pending',
+            onlineStatus: 'pending_review',
+            views: 0,
+            category: '直播回放',
+            cdnStatus: 'pending',
+            storagePath: '/videos/live/double11-highlights.mov',
+            bandwidth: '0',
+        }, {
+            id: 4,
+            title: 'UI设计基础-从零到精通系列合集',
+            cover: '🎨',
+            duration: '8:45:00',
+            size: '12.6 GB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2024-11-28 10:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 345000,
+            category: '教育课程',
+            cdnStatus: 'synced',
+            storagePath: '/videos/edu/ui-design-bundle.mp4',
+            bandwidth: '3.8 TB',
+        }, {
+            id: 5,
+            title: '公司年会团建活动纪念视频',
+            cover: '🎉',
+            duration: '18:45',
+            size: '520 MB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-01-05 16:30',
+            transcodeStatus: 'processing',
+            auditStatus: 'approved',
+            onlineStatus: 'offline',
+            views: 3200,
+            category: '企业文化',
+            cdnStatus: 'syncing',
+            storagePath: '/videos/internal/teambuilding-2025.mp4',
+            bandwidth: '15 GB',
+        }, {
+            id: 6,
+            title: '《数据分析思维》作者访谈完整版',
+            cover: '📊',
+            duration: '1:28:30',
+            size: '3.1 GB',
+            format: 'MP4',
+            resolution: '4K',
+            uploadTime: '2025-01-08 11:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 56700,
+            category: '访谈节目',
+            cdnStatus: 'synced',
+            storagePath: '/videos/interviews/data-thinking.mp4',
+            bandwidth: '420 GB',
+        }, {
+            id: 7,
+            title: '短视频运营实战技巧分享',
+            cover: '📱',
+            duration: '25:00',
+            size: '680 MB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-01-12 08:45',
+            transcodeStatus: 'completed',
+            auditStatus: 'rejected',
+            onlineStatus: 'offline',
+            views: 0,
+            category: '运营分享',
+            cdnStatus: 'not_synced',
+            storagePath: '/videos/ops/short-video-tips.mp4',
+            bandwidth: '0',
+        }, {
+            id: 8,
+            title: '2025跨年演唱会全程高清录制',
+            cover: '🎵',
+            duration: '4:30:00',
+            size: '18.2 GB',
+            format: 'MP4',
+            resolution: '4K',
+            uploadTime: '2025-01-01 03:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 890000,
+            category: '音乐演出',
+            cdnStatus: 'synced',
+            storagePath: '/videos/music/nye-concert-2025.mp4',
+            bandwidth: '9.5 TB',
+        }, {
+            id: 9,
+            title: '产品使用教程-入门指南',
+            cover: '📖',
+            duration: '12:30',
+            size: '320 MB',
+            format: 'MP4',
+            resolution: '720P',
+            uploadTime: '2025-01-15 13:20',
+            transcodeStatus: 'failed',
+            auditStatus: 'pending',
+            onlineStatus: 'offline',
+            views: 0,
+            category: '产品教程',
+            cdnStatus: 'not_synced',
+            storagePath: '/videos/tutorials/getting-started.mp4',
+            bandwidth: '0',
+        }, {
+            id: 10,
+            title: '行业峰会圆桌论坛-数字化转型',
+            cover: '🏢',
+            duration: '2:05:00',
+            size: '5.4 GB',
+            format: 'MP4',
+            resolution: '4K',
+            uploadTime: '2025-01-18 17:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 41000,
+            category: '行业峰会',
+            cdnStatus: 'synced',
+            storagePath: '/videos/summit/digital-transformation.mp4',
+            bandwidth: '310 GB',
+        }, {
+            id: 11,
+            title: '健身训练计划-30天挑战Day1',
+            cover: '💪',
+            duration: '35:00',
+            size: '950 MB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-02-01 06:30',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 72000,
+            category: '健身运动',
+            cdnStatus: 'synced',
+            storagePath: '/videos/fitness/30day-day1.mp4',
+            bandwidth: '550 GB',
+        }, {
+            id: 12,
+            title: 'VR全景看房-高端别墅展示',
+            cover: '🏠',
+            duration: '8:20',
+            size: '2.1 GB',
+            format: 'MP4',
+            resolution: '8K',
+            uploadTime: '2025-02-05 10:15',
+            transcodeStatus: 'processing',
+            auditStatus: 'approved',
+            onlineStatus: 'pending_review',
+            views: 1500,
+            category: '房产展示',
+            cdnStatus: 'syncing',
+            storagePath: '/videos/realestate/vr-villa.mp4',
+            bandwidth: '28 GB',
+        }, {
+            id: 13,
+            title: '游戏实况解说-《黑神话》BOSS战',
+            cover: '🎮',
+            duration: '1:50:00',
+            size: '3.8 GB',
+            format: 'MP4',
+            resolution: '4K',
+            uploadTime: '2025-02-08 20:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 256000,
+            category: '游戏娱乐',
+            cdnStatus: 'synced',
+            storagePath: '/videos/gaming/blackmyth-boss.mp4',
+            bandwidth: '2.1 TB',
+        }, {
+            id: 14,
+            title: '校园招聘宣讲会录制视频',
+            cover: '🎓',
+            duration: '1:15:00',
+            size: '2.4 GB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-02-10 14:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 18900,
+            category: '招聘活动',
+            cdnStatus: 'synced',
+            storagePath: '/videos/hr/campus-recruit.mp4',
+            bandwidth: '95 GB',
+        }, {
+            id: 15,
+            title: '无人机航拍-城市风光4K',
+            cover: '🚁',
+            duration: '6:00',
+            size: '1.5 GB',
+            format: 'MP4',
+            resolution: '4K',
+            uploadTime: '2025-02-12 07:30',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 98000,
+            category: '风光摄影',
+            cdnStatus: 'synced',
+            storagePath: '/videos/aerial/cityscape.mp4',
+            bandwidth: '780 GB',
+        }, {
+            id: 16,
+            title: '内部培训-安全合规必修课',
+            cover: '🔒',
+            duration: '55:00',
+            size: '1.1 GB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-02-15 09:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 4500,
+            category: '内部培训',
+            cdnStatus: 'synced',
+            storagePath: '/videos/internal/security-training.mp4',
+            bandwidth: '22 GB',
+        }, {
+            id: 17,
+            title: '美食探店-隐藏在小巷的日料店',
+            cover: '🍣',
+            duration: '22:15',
+            size: '780 MB',
+            format: 'MP4',
+            resolution: '4K',
+            uploadTime: '2025-02-18 18:30',
+            transcodeStatus: 'completed',
+            auditStatus: 'pending',
+            onlineStatus: 'pending_review',
+            views: 0,
+            category: '美食探店',
+            cdnStatus: 'pending',
+            storagePath: '/videos/food/japanese-hidden.mp4',
+            bandwidth: '0',
+        }, {
+            id: 18,
+            title: '技术分享-AI大模型部署实践',
+            cover: '🤖',
+            duration: '1:40:00',
+            size: '3.5 GB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-02-20 15:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 34000,
+            category: '技术分享',
+            cdnStatus: 'synced',
+            storagePath: '/videos/tech/ai-deployment.mp4',
+            bandwidth: '260 GB',
+        }, {
+            id: 19,
+            title: '儿童英语启蒙-字母歌合集',
+            cover: '🔤',
+            duration: '15:00',
+            size: '400 MB',
+            format: 'MP4',
+            resolution: '720P',
+            uploadTime: '2025-02-22 10:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 156000,
+            category: '儿童教育',
+            cdnStatus: 'synced',
+            storagePath: '/videos/kids/abc-songs.mp4',
+            bandwidth: '1.1 TB',
+        }, {
+            id: 20,
+            title: '新品开箱测评-旗舰手机深度体验',
+            cover: '📦',
+            duration: '28:00',
+            size: '1.8 GB',
+            format: 'MP4',
+            resolution: '4K',
+            uploadTime: '2025-02-25 12:00',
+            transcodeStatus: 'pending',
+            auditStatus: 'pending',
+            onlineStatus: 'offline',
+            views: 0,
+            category: '产品测评',
+            cdnStatus: 'not_synced',
+            storagePath: '/videos/reviews/flagship-phone.mp4',
+            bandwidth: '0',
+        }, {
+            id: 21,
+            title: '瑜伽冥想引导-30分钟放松',
+            cover: '🧘',
+            duration: '30:00',
+            size: '620 MB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-03-01 05:30',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 210000,
+            category: '健身运动',
+            cdnStatus: 'synced',
+            storagePath: '/videos/fitness/yoga-meditation.mp4',
+            bandwidth: '1.6 TB',
+        }, {
+            id: 22,
+            title: '纪录片-极地探险之旅',
+            cover: '❄️',
+            duration: '1:30:00',
+            size: '6.2 GB',
+            format: 'MP4',
+            resolution: '4K',
+            uploadTime: '2025-03-05 20:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 178000,
+            category: '纪录片',
+            cdnStatus: 'synced',
+            storagePath: '/videos/docu/polar-expedition.mp4',
+            bandwidth: '2.8 TB',
+        }, {
+            id: 23,
+            title: '电商直播-美妆专场回放',
+            cover: '💄',
+            duration: '3:20:00',
+            size: '7.5 GB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-03-08 23:00',
+            transcodeStatus: 'processing',
+            auditStatus: 'approved',
+            onlineStatus: 'pending_review',
+            views: 45000,
+            category: '直播回放',
+            cdnStatus: 'syncing',
+            storagePath: '/videos/live/beauty-livestream.mp4',
+            bandwidth: '180 GB',
+        }, {
+            id: 24,
+            title: '开源项目贡献指南-手把手教学',
+            cover: '💻',
+            duration: '42:00',
+            size: '1.3 GB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-03-10 16:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 28500,
+            category: '技术分享',
+            cdnStatus: 'synced',
+            storagePath: '/videos/tech/oss-contribution.mp4',
+            bandwidth: '190 GB',
+        }, {
+            id: 25,
+            title: '旅游Vlog-大理环洱海骑行',
+            cover: '🚲',
+            duration: '20:00',
+            size: '900 MB',
+            format: 'MP4',
+            resolution: '4K',
+            uploadTime: '2025-03-12 08:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 67000,
+            category: '旅游Vlog',
+            cdnStatus: 'synced',
+            storagePath: '/videos/travel/dali-cycling.mp4',
+            bandwidth: '490 GB',
+        }, {
+            id: 26,
+            title: '金融理财入门-基金定投策略',
+            cover: '💰',
+            duration: '38:00',
+            size: '850 MB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-03-15 19:00',
+            transcodeStatus: 'failed',
+            auditStatus: 'pending',
+            onlineStatus: 'offline',
+            views: 0,
+            category: '财经知识',
+            cdnStatus: 'not_synced',
+            storagePath: '/videos/finance/fund-investment.mp4',
+            bandwidth: '0',
+        }, {
+            id: 27,
+            title: '宠物日常-猫咪行为解读',
+            cover: '🐱',
+            duration: '16:30',
+            size: '550 MB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-03-18 11:30',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 134000,
+            category: '宠物生活',
+            cdnStatus: 'synced',
+            storagePath: '/videos/pets/cat-behavior.mp4',
+            bandwidth: '920 GB',
+        }, {
+            id: 28,
+            title: '公司季度总结汇报会议录制',
+            cover: '📋',
+            duration: '2:00:00',
+            size: '4.2 GB',
+            format: 'MP4',
+            resolution: '1080P',
+            uploadTime: '2025-03-20 17:00',
+            transcodeStatus: 'completed',
+            auditStatus: 'approved',
+            onlineStatus: 'online',
+            views: 3200,
+            category: '企业宣传',
+            cdnStatus: 'synced',
+            storagePath: '/videos/internal/q1-review.mp4',
+            bandwidth: '28 GB',
+        }];
+
+        // 初始化数据
+        function initData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try { return JSON.parse(stored); } catch (e) {}
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultVideos));
+            return defaultVideos;
+        }
+        let videos = initData();
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(videos));
+        }
+
+        let currentPage = 'dashboard';
+        let videoListPage = 1;
+        const pageSize = 10;
+        let videoFilter = { search: '', category: '', status: '' };
+
+        // ==================== 页面切换 ====================
+        function switchPage(page, navEl) {
+            currentPage = page;
+            document.querySelectorAll('.sidebar .nav-item').forEach(item => item.classList.remove('active'));
+            if (navEl) navEl.classList.add('active');
+            else {
+                const target = document.querySelector(`.nav-item[data-page="${page}"]`);
+                if (target) target.classList.add('active');
+            }
+            updateTopbar();
+            renderPage();
+        }
+
+        function updateTopbar() {
+            const titles = {
+                dashboard: ['运营仪表盘', '仪表盘'],
+                videos: ['视频资源管理', '视频管理'],
+                upload: ['上传视频', '上传'],
+                transcode: ['转码队列', '转码监控'],
+                cdn: ['CDN 状态', 'CDN监控'],
+            };
+            const [title, bread] = titles[currentPage] || ['运营仪表盘', '仪表盘'];
+            document.getElementById('pageTitle').textContent = title;
+            document.getElementById('breadcrumbSub').textContent = bread;
+            document.getElementById('totalBadge').textContent = videos.length;
+            const transcodeCount = videos.filter(v => v.transcodeStatus === 'processing' || v.transcodeStatus ===
+                'pending').length;
+            document.getElementById('transcodeBadge').textContent = transcodeCount;
+        }
+
+        // ==================== 渲染页面 ====================
+        function renderPage() {
+            const area = document.getElementById('contentArea');
+            switch (currentPage) {
+                case 'dashboard':
+                    area.innerHTML = renderDashboard();
+                    break;
+                case 'videos':
+                    area.innerHTML = renderVideoList();
+                    break;
+                case 'upload':
+                    area.innerHTML = renderUploadPage();
+                    break;
+                case 'transcode':
+                    area.innerHTML = renderTranscodePage();
+                    break;
+                case 'cdn':
+                    area.innerHTML = renderCDNPage();
+                    break;
+                default:
+                    area.innerHTML = renderDashboard();
+            }
+            updateTopbar();
+        }
+
+        // ==================== 仪表盘 ====================
+        function renderDashboard() {
+            const totalVideos = videos.length;
+            const totalViews = videos.reduce((s, v) => s + v.views, 0);
+            const onlineCount = videos.filter(v => v.onlineStatus === 'online').length;
+            const totalSize = videos.reduce((s, v) => {
+                const num = parseFloat(v.size);
+                const unit = v.size.replace(/[\d.\s]+/g, '').toUpperCase();
+                if (unit.includes('GB')) return s + num;
+                if (unit.includes('MB')) return s + num / 1024;
+                if (unit.includes('TB')) return s + num * 1024;
+                return s;
+            }, 0);
+            const pendingAudit = videos.filter(v => v.auditStatus === 'pending').length;
+            const processingTranscode = videos.filter(v => v.transcodeStatus === 'processing' || v.transcodeStatus ===
+                'pending').length;
+            const totalBandwidth = videos.reduce((s, v) => {
+                const num = parseFloat(v.bandwidth);
+                const unit = v.bandwidth.replace(/[\d.\s]+/g, '').toUpperCase();
+                if (unit.includes('TB')) return s + num * 1024;
+                if (unit.includes('GB')) return s + num;
+                return s;
+            }, 0);
+
+            // 热门视频TOP5
+            const topVideos = [...videos].sort((a, b) => b.views - a.views).slice(0, 5);
+
+            // 分类统计
+            const categoryStats = {};
+            videos.forEach(v => {
+                const cat = v.category || '未分类';
+                categoryStats[cat] = (categoryStats[cat] || 0) + 1;
+            });
+            const catEntries = Object.entries(categoryStats).sort((a, b) => b[1] - a[1]).slice(0, 6);
+
+            // 最近7天每日上传模拟数据
+            const dailyUploads = [4, 7, 3, 9, 5, 8, 6];
+            const maxDaily = Math.max(...dailyUploads);
+
+            return `
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon blue">🎬</div>
+                <div class="stat-info">
+                  <div class="stat-value">${totalVideos}</div>
+                  <div class="stat-label">视频总数</div>
+                  <div class="stat-change up">▲ 较上周 +12%</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon green">👁️</div>
+                <div class="stat-info">
+                  <div class="stat-value">${formatNumber(totalViews)}</div>
+                  <div class="stat-label">总播放量</div>
+                  <div class="stat-change up">▲ 较上周 +18.5%</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon purple">💾</div>
+                <div class="stat-info">
+                  <div class="stat-value">${totalSize.toFixed(1)} GB</div>
+                  <div class="stat-label">存储使用 / 1TB</div>
+                  <div style="margin-top:6px;">
+                    <div class="progress-bar-wrap"><div class="progress-bar-fill blue" style="width:${Math.min((totalSize/1024)*100,100)}%"></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon orange">📡</div>
+                <div class="stat-info">
+                  <div class="stat-value">${totalBandwidth.toFixed(1)} GB</div>
+                  <div class="stat-label">CDN带宽消耗(本月)</div>
+                  <div class="stat-change up">▲ 较上月 +8.3%</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon red">⏳</div>
+                <div class="stat-info">
+                  <div class="stat-value">${pendingAudit}</div>
+                  <div class="stat-label">待审核视频</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon blue">⚙️</div>
+                <div class="stat-info">
+                  <div class="stat-value">${processingTranscode}</div>
+                  <div class="stat-label">转码进行中</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row-2col">
+              <div class="panel">
+                <div class="panel-header"><h3>🔥 热门视频 TOP5</h3></div>
+                <div class="panel-body">
+                  <ul class="hot-list">
+                    ${topVideos.map((v,i) => `
+                      <li>
+                        <span class="rank ${i===0?'top1':i===1?'top2':i===2?'top3':'normal'}">${i+1}</span>
+                        <span class="hot-title" title="${v.title}">${v.title}</span>
+                        <span class="hot-views">${formatNumber(v.views)} 次</span>
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="panel-header"><h3>📈 近7天上传趋势</h3></div>
+                <div class="panel-body">
+                  <div class="mini-chart">
+                    ${dailyUploads.map(v => `<div class="bar ${v===maxDaily?'high':''}" style="height:${(v/maxDaily)*100}%" title="${v}个"></div>`).join('')}
+                  </div>
+                  <div style="display:flex;justify-content:space-between;font-size:10px;color:#9ca3af;margin-top:8px;padding:0 2px;">
+                    <span>3/14</span><span>3/15</span><span>3/16</span><span>3/17</span><span>3/18</span><span>3/19</span><span>今天</span>
+                  </div>
+                  <div style="margin-top:12px;font-size:12px;color:#6b7280;">本周共上传 <b>${dailyUploads.reduce((a,b)=>a+b,0)}</b> 个视频</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header"><h3>📂 视频分类分布</h3></div>
+              <div class="panel-body">
+                <div style="display:flex;flex-wrap:wrap;gap:12px;">
+                  ${catEntries.map(([cat,count]) => `
+                    <div style="background:#f9fafb;border-radius:8px;padding:10px 16px;text-align:center;min-width:90px;">
+                      <div style="font-weight:700;font-size:18px;">${count}</div>
+                      <div style="font-size:11px;color:#6b7280;">${cat}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        // ==================== 视频列表 ====================
+        function renderVideoList() {
+            const filtered = getFilteredVideos();
+            const totalPages = Math.ceil(filtered.length / pageSize);
+            if (videoListPage > totalPages && totalPages > 0) videoListPage = totalPages;
+            if (videoListPage < 1) videoListPage = 1;
+            const start = (videoListPage - 1) * pageSize;
+            const pageVideos = filtered.slice(start, start + pageSize);
+
+            const statusMap = {
+                'online': '<span class="tag tag-online">已上线</span>',
+                'offline': '<span class="tag tag-offline">已下线</span>',
+                'pending_review': '<span class="tag tag-pending">待上线</span>',
+            };
+            const transcodeMap = {
+                'completed': '<span class="tag tag-success">已完成</span>',
+                'processing': '<span class="tag tag-warning">转码中</span>',
+                'pending': '<span class="tag tag-gray">待转码</span>',
+                'failed': '<span class="tag tag-danger">转码失败</span>',
+            };
+            const auditMap = {
+                'approved': '<span class="tag tag-success">已通过</span>',
+                'pending': '<span class="tag tag-warning">待审核</span>',
+                'rejected': '<span class="tag tag-danger">未通过</span>',
+            };
+            const cdnMap = {
+                'synced': '<span class="tag tag-success">已同步</span>',
+                'syncing': '<span class="tag tag-warning">同步中</span>',
+                'pending': '<span class="tag tag-gray">待同步</span>',
+                'not_synced': '<span class="tag tag-danger">未同步</span>',
+            };
+
+            const categories = [...new Set(videos.map(v => v.category))].sort();
+
+            return `
+            <div class="filter-bar">
+              <input type="text" class="search-input" placeholder="🔍 搜索视频标题..." value="${videoFilter.search}" oninput="updateFilter('search', this.value)">
+              <select class="select-filter" onchange="updateFilter('category', this.value)">
+                <option value="">全部分类</option>
+                ${categories.map(c => `<option value="${c}" ${videoFilter.category===c?'selected':''}>${c}</option>`).join('')}
+              </select>
+              <select class="select-filter" onchange="updateFilter('status', this.value)">
+                <option value="">全部状态</option>
+                <option value="online" ${videoFilter.status==='online'?'selected':''}>已上线</option>
+                <option value="offline" ${videoFilter.status==='offline'?'selected':''}>已下线</option>
+                <option value="pending_review" ${videoFilter.status==='pending_review'?'selected':''}>待上线</option>
+              </select>
+              <span style="font-size:12px;color:#6b7280;white-space:nowrap;">共 <b>${filtered.length}</b> 条</span>
+              <button class="btn btn-outline btn-sm" onclick="resetFilter()">重置筛选</button>
+            </div>
+
+            <div class="panel">
+              <div class="panel-body no-padding">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>视频信息</th>
+                      <th>分类</th>
+                      <th>分辨率</th>
+                      <th>大小</th>
+                      <th>转码状态</th>
+                      <th>审核状态</th>
+                      <th>上线状态</th>
+                      <th>CDN</th>
+                      <th>播放量</th>
+                      <th>上传时间</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${pageVideos.map(v => `
+                      <tr>
+                        <td>
+                          <div class="video-title-cell">
+                            <div class="thumb">${v.cover}</div>
+                            <span class="vtitle" title="${v.title}">${v.title}</span>
+                          </div>
+                        </td>
+                        <td><span class="tag tag-info">${v.category}</span></td>
+                        <td>${v.resolution}</td>
+                        <td>${v.size}</td>
+                        <td>${transcodeMap[v.transcodeStatus] || v.transcodeStatus}</td>
+                        <td>${auditMap[v.auditStatus] || v.auditStatus}</td>
+                        <td>${statusMap[v.onlineStatus] || v.onlineStatus}</td>
+                        <td>${cdnMap[v.cdnStatus] || v.cdnStatus}</td>
+                        <td><b>${formatNumber(v.views)}</b></td>
+                        <td style="font-size:11px;color:#6b7280;">${v.uploadTime}</td>
+                        <td>
+                          <button class="btn-info-text" onclick="viewDetail(${v.id})" title="详情">📋</button>
+                          <button class="btn-info-text" onclick="editVideo(${v.id})" title="编辑">✏️</button>
+                          <button class="btn-danger-text" onclick="deleteVideo(${v.id})" title="删除">🗑</button>
+                        </td>
+                      </tr>
+                    `).join('')}
+                    ${pageVideos.length === 0 ? `<tr><td colspan="11" style="text-align:center;padding:40px;color:#9ca3af;">暂无匹配的视频资源</td></tr>` : ''}
+                  </tbody>
+                </table>
+              </div>
+              ${totalPages > 1 ? `
+              <div class="pagination">
+                <button ${videoListPage===1?'disabled':''} onclick="goToPage(${videoListPage-1})">◀</button>
+                ${generatePageButtons(videoListPage, totalPages)}
+                <button ${videoListPage===totalPages?'disabled':''} onclick="goToPage(${videoListPage+1})">▶</button>
+                <span class="page-info">第 ${videoListPage} / ${totalPages} 页</span>
+              </div>
+              ` : ''}
+            </div>
+          `;
+        }
+
+        function generatePageButtons(current, total) {
+            let html = '';
+            const maxShow = 5;
+            let start = Math.max(1, current - Math.floor(maxShow / 2));
+            let end = Math.min(total, start + maxShow - 1);
+            if (end - start < maxShow - 1) start = Math.max(1, end - maxShow + 1);
+            for (let i = start; i <= end; i++) {
+                html += `<button class="${i===current?'active':''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            return html;
+        }
+
+        function goToPage(p) {
+            videoListPage = p;
+            renderPage();
+        }
+
+        function updateFilter(key, value) {
+            videoFilter[key] = value;
+            videoListPage = 1;
+            renderPage();
+        }
+
+        function resetFilter() {
+            videoFilter = { search: '', category: '', status: '' };
+            videoListPage = 1;
+            renderPage();
+        }
+
+        function getFilteredVideos() {
+            return videos.filter(v => {
+                if (videoFilter.search && !v.title.toLowerCase().includes(videoFilter.search.toLowerCase()))
+                    return false;
+                if (videoFilter.category && v.category !== videoFilter.category) return false;
+                if (videoFilter.status && v.onlineStatus !== videoFilter.status) return false;
+                return true;
+            });
+        }
+
+        // ==================== 上传页面 ====================
+        function renderUploadPage() {
+            const categories = [...new Set(videos.map(v => v.category))].sort();
+            return `
+            <div class="panel" style="max-width:700px;">
+              <div class="panel-header"><h3>📤 上传新视频</h3></div>
+              <div class="panel-body">
+                <form onsubmit="handleUpload(event)" id="uploadForm">
+                  <div class="form-group">
+                    <label>视频标题 *</label>
+                    <input type="text" id="uploadTitle" placeholder="请输入视频标题" required>
+                  </div>
+                  <div class="form-group">
+                    <label>分类</label>
+                    <select id="uploadCategory">
+                      <option value="">选择分类</option>
+                      ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
+                      <option value="其他">其他（新建）</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>自定义分类（如选择"其他"请填写）</label>
+                    <input type="text" id="uploadCategoryCustom" placeholder="输入新分类名称">
+                  </div>
+                  <div class="form-group">
+                    <label>分辨率</label>
+                    <select id="uploadResolution">
+                      <option value="4K">4K (2160P)</option>
+                      <option value="1080P" selected>1080P</option>
+                      <option value="720P">720P</option>
+                      <option value="8K">8K</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>视频文件（模拟）</label>
+                    <input type="text" id="uploadFile" placeholder="拖拽或点击选择文件..." readonly style="background:#f9fafb;cursor:default;" value="点击下方按钮模拟上传">
+                  </div>
+                  <div class="form-group">
+                    <label>视频时长</label>
+                    <input type="text" id="uploadDuration" placeholder="如: 1:30:00" value="30:00">
+                  </div>
+                  <div class="form-group">
+                    <label>描述</label>
+                    <textarea id="uploadDesc" placeholder="视频简介（可选）" rows="3"></textarea>
+                  </div>
+                  <div style="display:flex;gap:10px;">
+                    <button type="submit" class="btn btn-primary">✅ 确认上传</button>
+                    <button type="button" class="btn btn-outline" onclick="switchPage('videos', document.querySelector('.nav-item[data-page=\\'videos\\']'))">取消</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          `;
+        }
+
+        function handleUpload(e) {
+            e.preventDefault();
+            const title = document.getElementById('uploadTitle').value.trim();
+            const categorySelect = document.getElementById('uploadCategory').value;
+            const categoryCustom = document.getElementById('uploadCategoryCustom').value.trim();
+            const resolution = document.getElementById('uploadResolution').value;
+            const duration = document.getElementById('uploadDuration').value.trim() || '30:00';
+            const desc = document.getElementById('uploadDesc').value.trim();
+
+            const category = categorySelect === '其他' && categoryCustom ? categoryCustom : categorySelect || '未分类';
+
+            const newVideo = {
+                id: Math.max(0, ...videos.map(v => v.id)) + 1,
+                title: title,
+                cover: '🎬',
+                duration: duration,
+                size: (Math.random() * 3 + 0.3).toFixed(1) + ' GB',
+                format: 'MP4',
+                resolution: resolution,
+                uploadTime: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit' }),
+                transcodeStatus: 'pending',
+                auditStatus: 'pending',
+                onlineStatus: 'offline',
+                views: 0,
+                category: category,
+                cdnStatus: 'not_synced',
+                storagePath: '/videos/upload/' + Date.now() + '.mp4',
+                bandwidth: '0',
+            };
+            videos.unshift(newVideo);
+            saveData();
+            alert('✅ 视频上传成功！已加入转码队列等待处理。');
+            switchPage('videos', document.querySelector('.nav-item[data-page="videos"]'));
+            updateTopbar();
+        }
+
+        function openUploadModal() {
+            switchPage('upload', document.querySelector('.nav-item[data-page="upload"]'));
+        }
+
+        // ==================== 转码队列页面 ====================
+        function renderTranscodePage() {
+            const transcodeVideos = videos.filter(v => v.transcodeStatus === 'processing' || v.transcodeStatus ===
+                'pending' || v.transcodeStatus === 'failed');
+            return `
+            <div class="panel">
+              <div class="panel-header"><h3>⚙️ 转码队列监控</h3><span style="font-size:12px;color:#6b7280;">队列中: ${transcodeVideos.filter(v=>v.transcodeStatus==='pending').length} 个 | 处理中: ${transcodeVideos.filter(v=>v.transcodeStatus==='processing').length} 个 | 失败: ${transcodeVideos.filter(v=>v.transcodeStatus==='failed').length} 个</span></div>
+              <div class="panel-body no-padding">
+                <table>
+                  <thead><tr><th>视频</th><th>分辨率</th><th>大小</th><th>转码状态</th><th>进度</th><th>上传时间</th><th>操作</th></tr></thead>
+                  <tbody>
+                    ${transcodeVideos.length === 0 ? '<tr><td colspan="7" style="text-align:center;padding:40px;color:#9ca3af;">✅ 转码队列为空，所有视频处理完毕</td></tr>' : ''}
+                    ${transcodeVideos.map(v => {
+                      const progress = v.transcodeStatus === 'completed' ? 100 : v.transcodeStatus === 'processing' ? Math.floor(Math.random()*60+30) : v.transcodeStatus === 'failed' ? 0 : 0;
+                      const barColor = v.transcodeStatus === 'failed' ? 'orange' : 'blue';
+                      return `
+                        <tr>
+                          <td><div class="video-title-cell"><div class="thumb">${v.cover}</div><span class="vtitle">${v.title}</span></div></td>
+                          <td>${v.resolution}</td>
+                          <td>${v.size}</td>
+                          <td>${v.transcodeStatus==='processing'?'<span class="tag tag-warning">转码中</span>':v.transcodeStatus==='pending'?'<span class="tag tag-gray">排队中</span>':'<span class="tag tag-danger">失败</span>'}</td>
+                          <td style="min-width:120px;">
+                            <div style="font-size:11px;margin-bottom:2px;">${progress}%</div>
+                            <div class="progress-bar-wrap"><div class="progress-bar-fill ${barColor}" style="width:${progress}%"></div></div>
+                          </td>
+                          <td style="font-size:11px;color:#6b7280;">${v.uploadTime}</td>
+                          <td>
+                            ${v.transcodeStatus==='failed' ? '<button class="btn-info-text" onclick="retryTranscode('+v.id+')">🔄 重试</button>' : '<button class="btn-danger-text" onclick="cancelTranscode('+v.id+')">取消</button>'}
+                          </td>
+                        </tr>`;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        }
+
+        function retryTranscode(id) {
+            const v = videos.find(v => v.id === id);
+            if (v) { v.transcodeStatus = 'pending';
+                saveData();
+                renderPage();
+                updateTopbar();
+                alert('已重新加入转码队列'); }
+        }
+
+        function cancelTranscode(id) {
+            const v = videos.find(v => v.id === id);
+            if (v && confirm('确定取消该视频的转码任务吗？')) { v.transcodeStatus = 'failed';
+                saveData();
+                renderPage();
+                updateTopbar(); }
+        }
+
+        // ==================== CDN页面 ====================
+        function renderCDNPage() {
+            const syncedCount = videos.filter(v => v.cdnStatus === 'synced').length;
+            const syncingCount = videos.filter(v => v.cdnStatus === 'syncing').length;
+            const pendingCount = videos.filter(v => v.cdnStatus === 'pending').length;
+            const notSyncedCount = videos.filter(v => v.cdnStatus === 'not_synced').length;
+            const totalBandwidth = videos.reduce((s, v) => {
+                const num = parseFloat(v.bandwidth);
+                const unit = v.bandwidth.replace(/[\d.\s]+/g, '').toUpperCase();
+                if (unit.includes('TB')) return s + num * 1024;
+                if (unit.includes('GB')) return s + num;
+                return s;
+            }, 0);
+            return `
+            <div class="stats-grid">
+              <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-info"><div class="stat-value">${syncedCount}</div><div class="stat-label">已同步节点</div></div></div>
+              <div class="stat-card"><div class="stat-icon orange">🔄</div><div class="stat-info"><div class="stat-value">${syncingCount}</div><div class="stat-label">同步中</div></div></div>
+              <div class="stat-card"><div class="stat-icon gray">⏳</div><div class="stat-info"><div class="stat-value">${pendingCount}</div><div class="stat-label">待同步</div></div></div>
+              <div class="stat-card"><div class="stat-icon red">❌</div><div class="stat-info"><div class="stat-value">${notSyncedCount}</div><div class="stat-label">未同步</div></div></div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><h3>🌐 CDN 节点状态概览</h3></div>
+              <div class="panel-body">
+                <p style="font-size:13px;color:#6b7280;">📡 总带宽消耗(本月): <b>${totalBandwidth.toFixed(1)} GB</b></p>
+                <p style="font-size:13px;color:#6b7280;">🌍 全球节点: <b>12个</b> (亚太6个, 北美3个, 欧洲2个, 南美1个)</p>
+                <p style="font-size:13px;color:#6b7280;">⚡ 平均回源率: <b>4.2%</b></p>
+                <p style="font-size:13px;color:#6b7280;">⏱️ 平均首屏延迟: <b>68ms</b></p>
+                <div style="margin-top:12px;padding:12px;background:#ecfdf5;border-radius:8px;font-size:12px;color:#059669;">
+                  ✅ CDN服务运行正常，所有节点健康检查通过
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        // ==================== 详情/编辑/删除 ====================
+        function viewDetail(id) {
+            const v = videos.find(v => v.id === id);
+            if (!v) return;
+            const modalHTML = `
+            <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+              <div class="modal" style="max-width:550px;">
+                <div class="modal-header"><h2>📋 视频详情</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+                <div class="modal-body">
+                  <p><b>标题:</b> ${v.title}</p>
+                  <p><b>ID:</b> ${v.id}</p>
+                  <p><b>分类:</b> ${v.category}</p>
+                  <p><b>时长:</b> ${v.duration}</p>
+                  <p><b>大小:</b> ${v.size}</p>
+                  <p><b>分辨率:</b> ${v.resolution}</p>
+                  <p><b>格式:</b> ${v.format}</p>
+                  <p><b>存储路径:</b> <code style="font-size:11px;">${v.storagePath}</code></p>
+                  <p><b>上传时间:</b> ${v.uploadTime}</p>
+                  <p><b>播放量:</b> ${formatNumber(v.views)}</p>
+                  <p><b>转码状态:</b> ${v.transcodeStatus}</p>
+                  <p><b>审核状态:</b> ${v.auditStatus}</p>
+                  <p><b>上线状态:</b> ${v.onlineStatus}</p>
+                  <p><b>CDN状态:</b> ${v.cdnStatus}</p>
+                  <p><b>带宽消耗:</b> ${v.bandwidth}</p>
+                </div>
+                <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal()">关闭</button></div>
+              </div>
+            </div>`;
+            document.getElementById('modalContainer').innerHTML = modalHTML;
+        }
+
+        function editVideo(id) {
+            const v = videos.find(v => v.id === id);
+            if (!v) return;
+            const categories = [...new Set(videos.map(v => v.category))].sort();
+            const modalHTML = `
+            <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+              <div class="modal">
+                <div class="modal-header"><h2>✏️ 编辑视频</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+                <div class="modal-body">
+                  <form onsubmit="saveEdit(event, ${v.id})">
+                    <div class="form-group"><label>标题</label><input type="text" id="editTitle" value="${v.title.replace(/"/g,'&quot;')}" required></div>
+                    <div class="form-group"><label>分类</label><select id="editCategory">${categories.map(c=>`<option value="${c}" ${v.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
+                    <div class="form-group"><label>分辨率</label><select id="editResolution"><option value="4K" ${v.resolution==='4K'?'selected':''}>4K</option><option value="1080P" ${v.resolution==='1080P'?'selected':''}>1080P</option><option value="720P" ${v.resolution==='720P'?'selected':''}>720P</option><option value="8K" ${v.resolution==='8K'?'selected':''}>8K</option></select></div>
+                    <div class="form-group"><label>上线状态</label><select id="editOnlineStatus"><option value="online" ${v.onlineStatus==='online'?'selected':''}>已上线</option><option value="offline" ${v.onlineStatus==='offline'?'selected':''}>已下线</option><option value="pending_review" ${v.onlineStatus==='pending_review'?'selected':''}>待上线</option></select></div>
+                    <div class="form-group"><label>审核状态</label><select id="editAuditStatus"><option value="approved" ${v.auditStatus==='approved'?'selected':''}>已通过</option><option value="pending" ${v.auditStatus==='pending'?'selected':''}>待审核</option><option value="rejected" ${v.auditStatus==='rejected'?'selected':''}>未通过</option></select></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">💾 保存修改</button>
+                  </form>
+                </div>
+              </div>
+            </div>`;
+            document.getElementById('modalContainer').innerHTML = modalHTML;
+        }
+
+        function saveEdit(e, id) {
+            e.preventDefault();
+            const v = videos.find(v => v.id === id);
+            if (!v) return;
+            v.title = document.getElementById('editTitle').value.trim();
+            v.category = document.getElementById('editCategory').value;
+            v.resolution = document.getElementById('editResolution').value;
+            v.onlineStatus = document.getElementById('editOnlineStatus').value;
+            v.auditStatus = document.getElementById('editAuditStatus').value;
+            saveData();
+            closeModal();
+            renderPage();
+            updateTopbar();
+            alert('✅ 视频信息已更新');
+        }
+
+        function deleteVideo(id) {
+            const v = videos.find(v => v.id === id);
+            if (!v) return;
+            if (confirm(`确定要永久删除视频「${v.title}」吗？\n此操作不可恢复。`)) {
+                videos = videos.filter(v => v.id !== id);
+                saveData();
+                renderPage();
+                updateTopbar();
+                alert('🗑 视频已删除');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modalContainer').innerHTML = '';
+        }
+
+        function refreshData() {
+            videos = initData();
+            renderPage();
+            updateTopbar();
+            alert('🔄 数据已刷新');
+        }
+
+        // ==================== 工具函数 ====================
+        function formatNumber(num) {
+            if (num >= 10000) {
+                return (num / 10000).toFixed(num >= 100000 ? 1 : 2) + '万';
+            }
+            return num.toLocaleString();
+        }
+
+        // ==================== 初始化 ====================
+        function init() {
+            updateTopbar();
+            renderPage();
+        }
+
+        // 键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+            if (e.ctrlKey && e.key === '1') { e.preventDefault();
+                switchPage('dashboard', document.querySelector('.nav-item[data-page="dashboard"]')); }
+            if (e.ctrlKey && e.key === '2') { e.preventDefault();
+                switchPage('videos', document.querySelector('.nav-item[data-page="videos"]')); }
+        });
+
+        init();
+        console.log('🚀 视频运维管理平台 VideoOps v2.4.1 已就绪');
+        console.log('💡 提示: Ctrl+1 仪表盘 | Ctrl+2 视频管理 | Esc 关闭弹窗');
+        console.log('📊 模拟数据共 ' + videos.length + ' 条视频记录');
+    </script>
+</body>
+</html>
